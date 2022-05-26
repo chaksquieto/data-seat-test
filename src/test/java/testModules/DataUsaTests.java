@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class DataUsaTests {
-    private final ArrayList<String> years = new ArrayList<>(Arrays.asList("2013","2014","2015","2016","2017","2018","2019"));
+    private final ArrayList<String> years = new ArrayList<>(Arrays.asList("2012","2013","2014","2015","2016","2017","2018","2019","2020"));
 
     @Before
     public void setup() {
@@ -39,9 +39,14 @@ public class DataUsaTests {
         JSONObject response = GetDataFromAPI.getJSONObjectFromAPI();
         //Selecting a jsonObject from the response and doing test validation on it
         JSONArray dataArray = response.getJSONArray("data");
+        ArrayList<String> validationList = new ArrayList<>();
         for (int i = 0; i < dataArray.length(); i++) {
-            validation(dataArray.getJSONObject(i));
+            validationList.add(validation(dataArray.getJSONObject(i)));
         }
+
+        Collections.sort(years);
+        Collections.sort(validationList);
+        assertEquals(years, validationList);
     }
 
     /**
@@ -59,7 +64,7 @@ public class DataUsaTests {
         validation(response.getJSONArray("data").getJSONObject(0));
     }
 
-    private void validation(JSONObject data) {
+    private String validation(JSONObject data) {
         int yearIdData = data.getInt("ID Year");
         String yearData = data.getString("Year");
         int populationData = data.getInt("Population");
@@ -78,5 +83,7 @@ public class DataUsaTests {
         Schema schema = SchemaLoader.load(jsonSchema);
         schema.validate(data);
         //endregion
+
+        return yearData;
     }
 }
